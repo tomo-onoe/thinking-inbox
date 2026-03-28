@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>シンプルメモアプリ</title>
+</head>
+<body>
+  <h1>メモアプリ</h1>
+
+  <input type="text" id="memoInput" placeholder="メモを入力" />
+  <button id="saveButton">保存</button>
+
+  <ul id="memoList"></ul>
+
+  <script>
+    const memoInput = document.getElementById("memoInput");
+    const saveButton = document.getElementById("saveButton");
+    const memoList = document.getElementById("memoList");
+
+    // ローカルストレージからメモを取得
+    function getMemos() {
+      const memos = localStorage.getItem("memos");
+      return memos ? JSON.parse(memos) : [];
+    }
+
+    // ローカルストレージにメモを保存
+    function saveMemos(memos) {
+      localStorage.setItem("memos", JSON.stringify(memos));
+    }
+
+    // 画面に一覧表示
+    function renderMemos() {
+      const memos = getMemos();
+      memoList.innerHTML = "";
+
+      memos.forEach(function(memo) {
+        const li = document.createElement("li");
+        li.textContent = memo;
+        memoList.appendChild(li);
+      });
+    }
+
+    // 保存ボタンを押したとき
+    saveButton.addEventListener("click", function() {
+      const text = memoInput.value.trim();
+
+      if (text === "") {
+        return;
+      }
+
+      const memos = getMemos();
+      memos.push(text);
+      saveMemos(memos);
+
+      memoInput.value = "";
+      renderMemos();
+    });
+
+    // 初回表示
+    renderMemos();
+  </script>
+</body>
+</html>
