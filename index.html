@@ -18,36 +18,46 @@
     const saveButton = document.getElementById("saveButton");
     const memoList = document.getElementById("memoList");
 
-    // ローカルストレージからメモを取得
     function getMemos() {
       const memos = localStorage.getItem("memos");
       return memos ? JSON.parse(memos) : [];
     }
 
-    // ローカルストレージにメモを保存
     function saveMemos(memos) {
       localStorage.setItem("memos", JSON.stringify(memos));
     }
 
-    // 画面に一覧表示
     function renderMemos() {
       const memos = getMemos();
       memoList.innerHTML = "";
 
-      memos.forEach(function(memo) {
+      memos.forEach(function(memo, index) {
         const li = document.createElement("li");
-        li.textContent = memo;
+
+        // メモ本文
+        const span = document.createElement("span");
+        span.textContent = memo;
+
+        // 削除ボタン
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "削除";
+
+        deleteButton.addEventListener("click", function() {
+          const memos = getMemos();
+          memos.splice(index, 1); // 該当メモを削除
+          saveMemos(memos);
+          renderMemos();
+        });
+
+        li.appendChild(span);
+        li.appendChild(deleteButton);
         memoList.appendChild(li);
       });
     }
 
-    // 保存ボタンを押したとき
     saveButton.addEventListener("click", function() {
       const text = memoInput.value.trim();
-
-      if (text === "") {
-        return;
-      }
+      if (text === "") return;
 
       const memos = getMemos();
       memos.push(text);
@@ -57,7 +67,6 @@
       renderMemos();
     });
 
-    // 初回表示
     renderMemos();
   </script>
 </body>
